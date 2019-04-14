@@ -12,14 +12,18 @@ int main(int argc, char** argv)
 	SDLNet_Init();
 
 	IPaddress ip;
-	SDLNet_ResolveHost(&ip, "127.0.0.1", 1234);
+	SDLNet_ResolveHost(&ip, "www.linux.org", 80);
+
+	const char* http = "GET / HTTP/1.1\nHost: www.linux.org\n\n";
 		
 	TCPsocket client = SDLNet_TCP_Open(&ip);
 
-	char text[100];
-	SDLNet_TCP_Recv(client, text, 100);
-	cout << text;
-	
+	SDLNet_TCP_Send(client, http, strlen(http) + 1);
+
+	char text[10000];
+
+	while (SDLNet_TCP_Recv(client, text, 10000))
+		cout << text;	
 
 	SDLNet_TCP_Close(client);
 
